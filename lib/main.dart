@@ -12,16 +12,18 @@ import 'l10n/app_localizations.dart';
 
 void main()async{
   WidgetsFlutterBinding.ensureInitialized();
-  await SharedPref.readLang();
+  String? langCode = await SharedPref.readLang();
   runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AppLanguageProvider(),),
         ChangeNotifierProvider(create: (context) => AppThemeProvider(),)
       ],
-      child: MyApp()));
+      child: MyApp( langcode: langCode ?? 'en',)));
 }
 
 class MyApp extends StatelessWidget{
+  String langcode;
+  MyApp({required this.langcode});
   @override
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<AppLanguageProvider>(context);
