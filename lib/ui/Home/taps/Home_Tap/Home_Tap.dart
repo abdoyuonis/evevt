@@ -4,8 +4,16 @@ import 'package:untitled15/utils/App_Color.dart';
 import 'package:untitled15/utils/App_Images.dart';
 import 'package:untitled15/utils/App_Style.dart';
 
-class HomeTap extends StatelessWidget {
-  const HomeTap({super.key});
+class HomeTap extends StatefulWidget {
+
+  HomeTap({super.key});
+
+  @override
+  State<HomeTap> createState() => _HomeTapState();
+}
+
+class _HomeTapState extends State<HomeTap> {
+  int slectedIndex=0;
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +39,24 @@ class HomeTap extends StatelessWidget {
             DefaultTabController(
                 length: eventName.length,
                 child: TabBar(
+                  onTap: (index) {
+                    slectedIndex=index;
+                    setState(() {
+
+                    });
+                  },
                   isScrollable: true,
+                    dividerColor: Colors.transparent,
+                    indicatorColor: Colors.transparent,
                     tabAlignment: TabAlignment.start,
                     labelPadding: EdgeInsets.zero,
                     tabs: eventName.map((e) {
-                      return EventTapIcon(isSlected: false,
+                      return EventTapIcon(
+                        borderColor: AppColors.white,
+                        colorUnSlectText: AppColors.white,
+                          colorSlectText: AppColors.primaryColor,
+                          colorSlect: AppColors.white,
+                          isSlected: slectedIndex==eventName.indexOf(e),
                           eventName: e);
                     },).toList()
                 )
@@ -51,6 +72,25 @@ class HomeTap extends StatelessWidget {
 
         ),
 
+      ),
+      body: Column(
+        children: [
+          SizedBox(height: 2,),
+          Expanded(
+            child: ListView.separated(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+                itemBuilder: (context, index) {
+                  return Image(image: AssetImage('assets/images/ImageGrobe.png')
+                      ,width: double.infinity,
+                    fit: BoxFit.fill,
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return SizedBox(height: 10,);
+                },
+                itemCount: 10),
+          )
+        ],
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled15/Providers/App_Theme_Provider.dart';
 import 'package:untitled15/l10n/app_localizations.dart';
+import 'package:untitled15/ui/Widgit/Languge_Change_Widgwt.dart';
 import 'package:untitled15/ui/onBordingScreen/On_Bording_Screen2.dart';
 import 'package:untitled15/utils/App_Color.dart';
 import 'package:untitled15/utils/App_Images.dart';
@@ -40,50 +41,7 @@ class Onbordingscreen extends StatelessWidget {
                         children: [
                           Text(AppLocalizations.of(context)!.language,style: AppStyle.midam20Primary,),
                           Spacer(),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              border: Border.all(
-                                width: 3,
-                                color: AppColors.primaryColor
-                              )
-                            ),
-                            child: Row(
-                              children: [
-                                IconButton(onPressed: (){
-                                  languageProvider.changeLanguage('en');
-                                },
-                                    icon: chekLanguageEn()?
-                                    Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(100),
-                                          border: Border.all(
-                                            width: 5,
-                                            color: AppColors.primaryColor
-                                          )
-                                        ),
-                                        child: Image(image: AssetImage(AppImages.usa))):
-                                    Image(image: AssetImage(AppImages.usa)
-                                    )),
-                                SizedBox(width: width*.001,),
-                                IconButton(onPressed: (){
-                                  languageProvider.changeLanguage('ar');
-                                },
-                                    icon: chekLanguageAr()?
-                                    Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(100),
-                                            border: Border.all(
-                                                width: 5,
-                                                color: AppColors.primaryColor
-                                            )
-                                        ),
-                                        child: Image(image: AssetImage(AppImages.eg))):
-                                    Image(image: AssetImage(AppImages.eg)
-                                    )),
-                              ],
-                            ),
-                          )
+                         ContinarChangeLanguge()
                         ],
                       ),
                       SizedBox(height: height*.02,),

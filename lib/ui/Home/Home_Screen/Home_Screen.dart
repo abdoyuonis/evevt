@@ -6,6 +6,9 @@ import 'package:untitled15/ui/Home/taps/profile/profile_Tap.dart';
 import 'package:untitled15/utils/App_Color.dart';
 import 'package:untitled15/utils/App_Images.dart';
 
+import '../taps/Home_Tap/Add_Event.dart';
+import '../taps/Home_Tap/Add_Events.dart';
+
 class HomeScreen extends StatefulWidget {
   static const String routeName= 'Home_Screen';
    HomeScreen({super.key});
@@ -40,7 +43,9 @@ class _HomeScreenState extends State<HomeScreen> {
         BottomNavigationBarItem(icon: ImageIcon(AssetImage(AppImages.profileIcon),color: AppColors.white,),label: 'Profile'),
       ]),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).pushNamed(AddEvents.routeName);
+        },
         child: Icon(Icons.add,color: AppColors.white,size: 30,),
         backgroundColor: AppColors.primaryColor,
         shape: RoundedRectangleBorder(

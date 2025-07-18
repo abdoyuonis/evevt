@@ -1,18 +1,28 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled15/Providers/App_Theme_Provider.dart';
 import 'package:untitled15/Providers/Language_Provider.dart';
 import 'package:untitled15/ui/Home/Home_Screen/Home_Screen.dart';
+import 'package:untitled15/ui/Home/taps/Home_Tap/Add_Event.dart';
+import 'package:untitled15/ui/Home/taps/Home_Tap/Add_Events.dart';
 import 'package:untitled15/ui/Home/taps/profile/profile_Tap.dart';
+import 'package:untitled15/ui/Login/Forget_Password_Screen.dart';
+import 'package:untitled15/ui/Login/Login_Screen.dart';
+import 'package:untitled15/ui/Login/Register_Screen.dart';
 import 'package:untitled15/ui/onBordingScreen/On_Bording_Screen2.dart';
 import 'package:untitled15/ui/onBordingScreen/onBordingScreen1.dart';
 import 'package:untitled15/utils/App_Theme.dart';
 import 'package:untitled15/utils/shared_pref.dart';
+import 'firebase_options.dart';
 import 'l10n/app_localizations.dart';
 
 void main()async{
   WidgetsFlutterBinding.ensureInitialized();
   String? langCode = await SharedPref.readLang();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AppLanguageProvider(),),
@@ -35,7 +45,12 @@ class MyApp extends StatelessWidget{
         ProfileTap.routeName:(context)=>ProfileTap(),
         Onbordingscreen.routeName:(context)=>Onbordingscreen(),
         OnBoardingPage.routeName:(context)=>OnBoardingPage(),
-        HomeScreen.routeName:(context)=>HomeScreen()
+        HomeScreen.routeName:(context)=>HomeScreen(),
+        LoginScreen.routeName:(context)=>LoginScreen(),
+        RegisterScreen.routeName:(context)=>RegisterScreen(),
+        ForgetPasswordScreen.routeName:(context)=>ForgetPasswordScreen(),
+        AddEvent.routeName:(context)=>AddEvent(),
+        AddEvents.routeName:(context)=>AddEvents()
       },
       locale: Locale(AppLanguageProvider.appLanguage),
       localizationsDelegates: AppLocalizations.localizationsDelegates,

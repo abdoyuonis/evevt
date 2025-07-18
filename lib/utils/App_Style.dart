@@ -42,4 +42,14 @@ class AppStyle{
       fontSize: 14,
       fontWeight: FontWeight.w400
   );
+  static const TextStyle midam16wGray = TextStyle(
+      color: Colors.grey,
+      fontSize: 16,
+      fontWeight: FontWeight.w400
+  );
+  static TextStyle midam20White= TextStyle(
+      color: AppColors.white,
+      fontSize: 20,
+      fontWeight: FontWeight.w400
+  );
 }

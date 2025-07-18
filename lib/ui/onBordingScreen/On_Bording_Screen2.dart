@@ -4,6 +4,7 @@ import 'package:introduction_screen/introduction_screen.dart';
 import 'package:untitled15/l10n/app_localizations.dart';
 import 'package:untitled15/ui/Home/Home_Screen/Home_Screen.dart';
 import 'package:untitled15/ui/Home/taps/profile/profile_Tap.dart';
+import 'package:untitled15/ui/Login/Login_Screen.dart';
 import 'package:untitled15/ui/Widgit/On_BOrding_Widgit.dart';
 import 'package:untitled15/utils/App_Color.dart';
 import 'package:untitled15/utils/App_Images.dart';
@@ -106,7 +107,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
     )
     ),
           child: const Icon(Icons.arrow_forward,color: Color(0xff5669FF),)),
-      done:  Container(
+      done: Container(
           padding: EdgeInsets.all(6),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
@@ -151,6 +152,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomeScreen();
+    return LoginScreen();
   }
 }
