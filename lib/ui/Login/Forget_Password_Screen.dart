@@ -4,7 +4,7 @@ import 'package:untitled15/utils/App_Style.dart';
 
 class ForgetPasswordScreen extends StatelessWidget {
   static const String routeName='Forget_Password';
-   ForgetPasswordScreen({super.key});
+   const ForgetPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled15/ui/Home/taps/Home_Tap/Home_Tap.dart';
 import 'package:untitled15/ui/Home/taps/Love_Tap/Love_Tap.dart';
@@ -6,12 +7,11 @@ import 'package:untitled15/ui/Home/taps/profile/profile_Tap.dart';
 import 'package:untitled15/utils/App_Color.dart';
 import 'package:untitled15/utils/App_Images.dart';
 
-import '../taps/Home_Tap/Add_Event.dart';
 import '../taps/Home_Tap/Add_Events.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName= 'Home_Screen';
-   HomeScreen({super.key});
+   const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -19,7 +19,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex=0;
-
   @override
   Widget build(BuildContext context) {
     List<Widget> taps= [HomeTap(),MapTap(),LoveTap(),ProfileTap(),];
@@ -46,7 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () {
           Navigator.of(context).pushNamed(AddEvents.routeName);
         },
-        child: Icon(Icons.add,color: AppColors.white,size: 30,),
         backgroundColor: AppColors.primaryColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
@@ -55,7 +53,8 @@ class _HomeScreenState extends State<HomeScreen> {
             color: AppColors.white
           )
         )
-        ,),
+        ,
+        child: Icon(Icons.add,color: AppColors.white,size: 30,),),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: taps[selectedIndex],
     );

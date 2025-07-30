@@ -22,7 +22,6 @@ class ButtonWidget extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
           onPressed: onPressed,
-          child: buttonChild,
         style: ElevatedButton.styleFrom(shadowColor: Colors.transparent,
           backgroundColor: colorBg,
           shape: RoundedRectangleBorder(
@@ -32,7 +31,8 @@ class ButtonWidget extends StatelessWidget {
             )
           ),
           padding: EdgeInsets.symmetric(vertical:height*.02 )
-        )
+        ),
+          child: buttonChild
 
       ),
     );
