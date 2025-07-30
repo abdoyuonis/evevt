@@ -1,11 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled15/Providers/App_Theme_Provider.dart';
 import 'package:untitled15/Providers/Language_Provider.dart';
+import 'package:untitled15/Providers/event_list_provider.dart';
 import 'package:untitled15/ui/Home/Home_Screen/Home_Screen.dart';
-import 'package:untitled15/ui/Home/taps/Home_Tap/Add_Event.dart';
 import 'package:untitled15/ui/Home/taps/Home_Tap/Add_Events.dart';
+import 'package:untitled15/ui/Home/taps/Home_Tap/Edit_Event.dart';
+import 'package:untitled15/ui/Home/taps/Home_Tap/Event_Details.dart';
 import 'package:untitled15/ui/Home/taps/profile/profile_Tap.dart';
 import 'package:untitled15/ui/Login/Forget_Password_Screen.dart';
 import 'package:untitled15/ui/Login/Login_Screen.dart';
@@ -19,21 +22,25 @@ import 'l10n/app_localizations.dart';
 
 void main()async{
   WidgetsFlutterBinding.ensureInitialized();
-  String? langCode = await SharedPref.readLang();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MultiProvider(
+  String? langCode = await SharedPref.readLang();
+  await FirebaseFirestore.instance.disableNetwork();
+  runApp(
+
+      MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AppLanguageProvider(),),
-        ChangeNotifierProvider(create: (context) => AppThemeProvider(),)
+        ChangeNotifierProvider(create: (context) => AppThemeProvider(),),
+        ChangeNotifierProvider(create: (context) => EventListProvider(),)
       ],
       child: MyApp( langcode: langCode ?? 'en',)));
 }
 
 class MyApp extends StatelessWidget{
   String langcode;
-  MyApp({required this.langcode});
+  MyApp({super.key, required this.langcode});
   @override
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<AppLanguageProvider>(context);
@@ -49,8 +56,9 @@ class MyApp extends StatelessWidget{
         LoginScreen.routeName:(context)=>LoginScreen(),
         RegisterScreen.routeName:(context)=>RegisterScreen(),
         ForgetPasswordScreen.routeName:(context)=>ForgetPasswordScreen(),
-        AddEvent.routeName:(context)=>AddEvent(),
-        AddEvents.routeName:(context)=>AddEvents()
+        AddEvents.routeName:(context)=>AddEvents(),
+        EventDetails.routeName:(context)=>EventDetails(),
+         EditEvent.routeName:(context)=>EditEvent(),
       },
       locale: Locale(AppLanguageProvider.appLanguage),
       localizationsDelegates: AppLocalizations.localizationsDelegates,

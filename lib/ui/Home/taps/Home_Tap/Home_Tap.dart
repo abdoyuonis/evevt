@@ -1,25 +1,36 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled15/Providers/event_list_provider.dart';
+import 'package:untitled15/ui/Home/taps/Home_Tap/Event_Details.dart';
 import 'package:untitled15/ui/Home/taps/Home_Tap/Event_Tap_Icon.dart';
+import 'package:untitled15/ui/Widgit/Event_Item.dart';
 import 'package:untitled15/utils/App_Color.dart';
 import 'package:untitled15/utils/App_Images.dart';
 import 'package:untitled15/utils/App_Style.dart';
+import 'package:untitled15/utils/Firebase_Utils.dart';
+
+import '../../../../model.dart';
 
 class HomeTap extends StatefulWidget {
 
-  HomeTap({super.key});
+   const HomeTap({super.key});
 
   @override
   State<HomeTap> createState() => _HomeTapState();
 }
 
 class _HomeTapState extends State<HomeTap> {
-  int slectedIndex=0;
+
+
 
   @override
   Widget build(BuildContext context) {
-    List<String> eventName = ['All','Sports','Birthday','Meeting','Gaming','WorkShop','Book Club'
-    ,'Exhibiyion','Holiday','eating'
-    ];
+    var eventListPorvider = Provider.of<EventListProvider>(context);
+    if(eventListPorvider.eventList.isEmpty){
+      eventListPorvider.getAllEvent();
+    }
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 159,
@@ -37,26 +48,23 @@ class _HomeTapState extends State<HomeTap> {
             ),
             SizedBox(height: 10,),
             DefaultTabController(
-                length: eventName.length,
+                length: eventListPorvider.eventName.length,
                 child: TabBar(
                   onTap: (index) {
-                    slectedIndex=index;
-                    setState(() {
-
-                    });
+                    eventListPorvider.changeSelectedIndex(index);
                   },
                   isScrollable: true,
                     dividerColor: Colors.transparent,
                     indicatorColor: Colors.transparent,
                     tabAlignment: TabAlignment.start,
                     labelPadding: EdgeInsets.zero,
-                    tabs: eventName.map((e) {
+                    tabs: eventListPorvider.eventName.map((e) {
                       return EventTapIcon(
                         borderColor: AppColors.white,
                         colorUnSlectText: AppColors.white,
                           colorSlectText: AppColors.primaryColor,
                           colorSlect: AppColors.white,
-                          isSlected: slectedIndex==eventName.indexOf(e),
+                          isSlected: eventListPorvider.selectedIndex==eventListPorvider.eventName.indexOf(e),
                           eventName: e);
                     },).toList()
                 )
@@ -77,21 +85,30 @@ class _HomeTapState extends State<HomeTap> {
         children: [
           SizedBox(height: 2,),
           Expanded(
-            child: ListView.separated(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+            child:eventListPorvider.filterEventList.isEmpty?
+            Center(
+              child: Text('Not found Event', style: AppStyle.bold20black,),
+            )
+                :
+            ListView.separated(
+              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                 itemBuilder: (context, index) {
-                  return Image(image: AssetImage('assets/images/ImageGrobe.png')
-                      ,width: double.infinity,
-                    fit: BoxFit.fill,
-                  );
+                  return InkWell(
+                    onTap: (){
+                      Navigator.of(context).pushNamed(EventDetails.routeName,
+                      arguments:eventListPorvider.filterEventList[index]
+                      );
+                    },
+                      child: EventItem(event: eventListPorvider.filterEventList[index],));
                 },
                 separatorBuilder: (context, index) {
                   return SizedBox(height: 10,);
                 },
-                itemCount: 10),
+                itemCount: eventListPorvider.filterEventList.length),
           )
         ],
       ),
     );
   }
+
 }

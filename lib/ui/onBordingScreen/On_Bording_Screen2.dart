@@ -2,8 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:untitled15/l10n/app_localizations.dart';
-import 'package:untitled15/ui/Home/Home_Screen/Home_Screen.dart';
-import 'package:untitled15/ui/Home/taps/profile/profile_Tap.dart';
 import 'package:untitled15/ui/Login/Login_Screen.dart';
 import 'package:untitled15/ui/Widgit/On_BOrding_Widgit.dart';
 import 'package:untitled15/utils/App_Color.dart';

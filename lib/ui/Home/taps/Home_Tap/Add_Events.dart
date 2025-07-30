@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled15/Providers/event_list_provider.dart';
+import 'package:untitled15/model.dart';
 import 'package:untitled15/ui/Login/Button_Widget.dart';
-import 'package:untitled15/ui/Widgit/BOttum_Shets.dart';
+import 'package:untitled15/ui/Widgit/toste_Widgit.dart';
+import 'package:untitled15/utils/Firebase_Utils.dart';
 
 import '../../../../utils/App_Color.dart';
 import '../../../../utils/App_Style.dart';
@@ -9,7 +13,7 @@ import 'Event_Tap_Icon.dart';
 
 class AddEvents extends StatefulWidget {
   static const String routeName= 'Add_Event_Screen';
-   AddEvents({super.key});
+   const AddEvents({super.key});
 
   @override
   State<AddEvents> createState() => _AddEventsState();
@@ -20,28 +24,30 @@ class _AddEventsState extends State<AddEvents> {
     DateTime? slectedDate;
     TimeOfDay? slectedTime;
     String? formatTime;
+   var formKay = GlobalKey<FormState>();
+   TextEditingController controllerTitle=TextEditingController();
+   TextEditingController controllerDescription=TextEditingController();
+   List<String> listImage=[
+     'assets/images/Sport.png',
+     'assets/images/Birthday.png',
+     'assets/images/Meeting.png',
+     'assets/images/Gaming.png',
+     'assets/images/WorkShop.png',
+     'assets/images/BookClub.png',
+     'assets/images/Exhibition.png',
+     'assets/images/Holiday.png',
+     'assets/images/Eating.png'
+   ];
+   List<String> eventName = ['Sports','Birthday','Meeting','Gaming','WorkShop','Book Club'
+     ,'Exhibiyion','Holiday','eating'
+   ];
+   late EventListProvider eventListPorvider;
 
-  
-  @override
+   @override
   Widget build(BuildContext context) {
+     eventListPorvider=Provider.of<EventListProvider>(context);
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    TextEditingController controllerTitle=TextEditingController();
-    TextEditingController controllerDescription=TextEditingController();
-    List<String> listImage=[
-      'assets/images/Sport.png',
-      'assets/images/Birthday.png',
-      'assets/images/Meeting.png',
-      'assets/images/Gaming.png',
-      'assets/images/WorkShop.png',
-      'assets/images/BookClub.png',
-      'assets/images/Exhibition.png',
-      'assets/images/Holiday.png',
-      'assets/images/Eating.png'
-    ];
-    List<String> eventName = ['Sports','Birthday','Meeting','Gaming','WorkShop','Book Club'
-      ,'Exhibiyion','Holiday','eating'
-    ];
     return  Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -53,7 +59,6 @@ class _AddEventsState extends State<AddEvents> {
         padding: const EdgeInsets.all(15),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
                 clipBehavior: Clip.antiAlias,
@@ -91,84 +96,105 @@ class _AddEventsState extends State<AddEvents> {
                     itemCount: eventName.length),
               ),
               SizedBox(height: height*0.02,),
-              Text('Title',style: AppStyle.midam16Black,),
-              SizedBox(height: height*0.002,),
-              FormFieldWidgit(
-                  controller: controllerTitle,
-                textHint: 'Event Title',
-                iconPrefix: Icon(Icons.note_alt_outlined,color: Colors.grey,),
-              ),
-              SizedBox(height: height*0.02,),
-              Text('Description',style: AppStyle.midam16Black,),
-              SizedBox(height: height*0.002,),
 
-              FormFieldWidgit(
-                controller: controllerDescription,
-                textHint: 'Event Description',
-                maxLine: 4,
-              ),
-              SizedBox(height: height*0.01,),
+             Form(
+               key: formKay,
+                 child: Column(
+                   crossAxisAlignment: CrossAxisAlignment.stretch,
+                   children: [
+                     Text('Title',style: AppStyle.midam16Black,),
+                     SizedBox(height: height*0.002,),
+                     FormFieldWidgit(
+                       validator: (text) {
+                         if(text==null||text.isEmpty){
+                           return 'Please Enter Title';
+                         }
+                         return null;
+                       },
+                       controller: controllerTitle,
+                       textHint: 'Event Title',
+                       iconPrefix: Icon(Icons.note_alt_outlined,color: Colors.grey,),
+                     ),
+                     SizedBox(height: height*0.02,),
+                     Text('Description',style: AppStyle.midam16Black,),
+                     SizedBox(height: height*0.002,),
 
-              Row(
-                children: [
-                  Icon(Icons.date_range),
-                  SizedBox(width: width*0.04,),
-                  Text('Event Date',style: AppStyle.midam16Black,),
-                  Spacer(),
-                  TextButton(
-                      onPressed: chooseDate,
+                     FormFieldWidgit(
+                       validator: (text) {
+                         if(text==null||text.isEmpty){
+                           return 'Please Enter Title';
+                         }
+                         return null;
+                       },
+                       controller: controllerDescription,
+                       textHint: 'Event Description',
+                       maxLine: 4,
+                     ),
+                     SizedBox(height: height*0.01,),
 
-                      child:slectedDate==null?
-                      Text("Choose Date"):
-                          Text('${slectedDate!.day}/${slectedDate!.month}/${slectedDate!.year}')
-                  )
-                ],
-              ),
-              SizedBox(height: height*0.001,),
-              Row(
-                children: [
-                  Icon(Icons.access_time),
-                  SizedBox(width: width*0.04,),
-                  Text('Event Time',style: AppStyle.midam16Black,),
-                  Spacer(),
-                  TextButton(
-                      onPressed: chooseTime,
-                      child: slectedTime==null?
-                      Text("Choose Time"):
-                          Text('$formatTime')
-                  )
-                ],
-              ),
-              SizedBox(height: height*0.001,),
-              Text('Location',style: AppStyle.midam16Black,),
-              SizedBox(height: height*0.001,),
-              ButtonWidget(
-                colorBg: Colors.transparent,
-                  onPressed: (){},
-                buttonChild: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      padding: EdgeInsets.symmetric(horizontal: 14,vertical: 14),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: AppColors.primaryColor
-                      ),
-                      child: Icon(Icons.my_location_outlined,color: AppColors.white,),
-                    ),
-                    Text('Choose Event Location',style: AppStyle.midam20Primary,),
-                    Spacer(),
-                    Icon(Icons.arrow_forward_ios_rounded,color: AppColors.primaryColor,),
-                    SizedBox(width: width*.03,)
-                  ],
-                ),
+                     Row(
+                       children: [
+                         Icon(Icons.date_range),
+                         SizedBox(width: width*0.04,),
+                         Text('Event Date',style: AppStyle.midam16Black,),
+                         Spacer(),
+                         TextButton(
+                             onPressed: chooseDate,
 
-              ),
-              SizedBox(height: height*0.001,),
-              ButtonWidget(
-                  onPressed: (){},
-                buttonChild: Text('Add Event',style: AppStyle.midam20White,),
-              )
+                             child:slectedDate==null?
+                             Text("Choose Date"):
+                             Text('${slectedDate!.day}/${slectedDate!.month}/${slectedDate!.year}')
+                         )
+                       ],
+                     ),
+                     SizedBox(height: height*0.001,),
+                     Row(
+                       children: [
+                         Icon(Icons.access_time),
+                         SizedBox(width: width*0.04,),
+                         Text('Event Time',style: AppStyle.midam16Black,),
+                         Spacer(),
+                         TextButton(
+                             onPressed: chooseTime,
+                             child: slectedTime==null?
+                             Text("Choose Time"):
+                             Text('$formatTime')
+                         )
+                       ],
+                     ),
+                     SizedBox(height: height*0.001,),
+                     Text('Location',style: AppStyle.midam16Black,),
+                     SizedBox(height: height*0.001,),
+                     ButtonWidget(
+                       colorBg: Colors.transparent,
+                       onPressed: (){},
+                       buttonChild: Row(
+                         children: [
+                           Container(
+                             margin: EdgeInsets.symmetric(horizontal: 10),
+                             padding: EdgeInsets.symmetric(horizontal: 14,vertical: 14),
+                             decoration: BoxDecoration(
+                                 borderRadius: BorderRadius.circular(16),
+                                 color: AppColors.primaryColor
+                             ),
+                             child: Icon(Icons.my_location_outlined,color: AppColors.white,),
+                           ),
+                           Text('Choose Event Location',style: AppStyle.midam20Primary,),
+                           Spacer(),
+                           Icon(Icons.arrow_forward_ios_rounded,color: AppColors.primaryColor,),
+                           SizedBox(width: width*.03,)
+                         ],
+                       ),
+
+                     ),
+                     SizedBox(height: height*0.001,),
+                     ButtonWidget(
+                       onPressed: addEvent,
+                       buttonChild: Text('Add Event',style: AppStyle.midam20White,),
+                     )
+                   ],
+                 )
+             )
             ],
           ),
         ),
@@ -199,4 +225,24 @@ class _AddEventsState extends State<AddEvents> {
 
    });
   }
+  void addEvent(){
+   if(formKay.currentState?.validate()==true){
+     Event event =Event(
+         dateTime: slectedDate!,
+         eventName: eventName[slectedIndex],
+         title: controllerTitle.text,
+         imagePath: listImage[slectedIndex],
+         description: controllerDescription.text,
+         time: formatTime!
+     );
+     FirebaseUtils.addEventToFireStore(event).timeout(Duration(milliseconds: 500),
+       onTimeout: () {
+       ToastUtils.toastMsg(msg: 'add event sacs');
+       eventListPorvider.getAllEvent();
+         Navigator.of(context).pop();
+       },
+     );
+   }
+  }
+
 }

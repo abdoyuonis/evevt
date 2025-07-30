@@ -6,13 +6,12 @@ import 'package:untitled15/ui/Login/Form_Fild_Widgit.dart';
 import 'package:untitled15/ui/Login/Register_Screen.dart';
 import 'package:untitled15/ui/Widgit/Languge_Change_Widgwt.dart';
 import 'package:untitled15/utils/App_Color.dart';
-import 'package:untitled15/utils/App_Images.dart';
 import 'package:untitled15/utils/App_Style.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = 'Login_Screen';
 
-   LoginScreen({super.key});
+   const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -61,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     SizedBox(height: height*.01,),
                     FormFieldWidgit(
+                      maxLine: 1,
                       obscurText: true,
                       textHint: 'Password',
                       iconPrefix: Icon(Icons.lock,color: Colors.grey,),

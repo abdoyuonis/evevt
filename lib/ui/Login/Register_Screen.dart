@@ -69,6 +69,7 @@ class RegisterScreen extends StatelessWidget {
                     ),
                     SizedBox(height: height*.01,),
                     FormFieldWidgit(
+                      maxLine: 1,
                       obscurText: true,
                       textHint: 'Password',
                       iconPrefix: Icon(Icons.lock,color: Colors.grey,),
@@ -86,6 +87,7 @@ class RegisterScreen extends StatelessWidget {
                     ),
                     SizedBox(height: height*.01,),
                     FormFieldWidgit(
+                      maxLine: 1,
                       obscurText: true,
                       textHint: 'Re_Password',
                       iconPrefix: Icon(Icons.lock,color: Colors.grey,),

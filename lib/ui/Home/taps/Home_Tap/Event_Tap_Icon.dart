@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:untitled15/utils/App_Color.dart';
 import 'package:untitled15/utils/App_Style.dart';
 
 class EventTapIcon extends StatelessWidget {

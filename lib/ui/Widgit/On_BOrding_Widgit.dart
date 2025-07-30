@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:untitled15/l10n/app_localizations.dart';
 import 'package:untitled15/utils/App_Images.dart';
 import 'package:untitled15/utils/App_Style.dart';
 
