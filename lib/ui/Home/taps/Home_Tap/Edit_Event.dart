@@ -6,6 +6,7 @@ import 'package:untitled15/Providers/event_list_provider.dart';
 import 'package:untitled15/model.dart';
 import 'package:untitled15/ui/Home/Home_Screen/Home_Screen.dart';
 import 'package:untitled15/ui/Login/Button_Widget.dart';
+import '../../../../Providers/My_User_Provider.dart';
 import '../../../../utils/App_Color.dart';
 import '../../../../utils/App_Style.dart';
 import '../../../Login/Form_Fild_Widgit.dart';
@@ -28,22 +29,22 @@ class _EditEventState extends State<EditEvent> {
   var formKay = GlobalKey<FormState>();
   TextEditingController controllerTitle=TextEditingController();
   TextEditingController controllerDescription=TextEditingController();
-  List<String> listImage=[
-    'assets/images/Sport.png',
-    'assets/images/Birthday.png',
-    'assets/images/Meeting.png',
-    'assets/images/Gaming.png',
-    'assets/images/WorkShop.png',
-    'assets/images/BookClub.png',
-    'assets/images/Exhibition.png',
-    'assets/images/Holiday.png',
-    'assets/images/Eating.png'
-  ];
-  List<String> eventName = ['Sports','Birthday','Meeting','Gaming','WorkShop','Book Club'
-    ,'Exhibiyion','Holiday','eating'
-  ];
+  // List<String> listImage=[
+  //   'assets/images/Sport.png',
+  //   'assets/images/Birthday.png',
+  //   'assets/images/Meeting.png',
+  //   'assets/images/Gaming.png',
+  //   'assets/images/WorkShop.png',
+  //   'assets/images/BookClub.png',
+  //   'assets/images/Exhibition.png',
+  //   'assets/images/Holiday.png',
+  //   'assets/images/Eating.png'
+  // ];
+  // List<String> eventName = ['Sports','Birthday','Meeting','Gaming','WorkShop','Book Club'
+  //   ,'Exhibiyion','Holiday','eating'
+  // ];
   late EventListProvider eventListPorvider;
-   late Event event;
+  Event? event;
   @override
   void initState() {
     super.initState();
@@ -51,11 +52,11 @@ class _EditEventState extends State<EditEvent> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
        event = ModalRoute.of(context)!.settings.arguments as Event;
 
-      controllerTitle.text = event.title;
-      controllerDescription.text = event.description;
+      controllerTitle.text = event?.title??'';
+      controllerDescription.text = event?.description??"";
 
       setState(() {
-        slectedIndex = listImage.indexOf(event.imagePath);
+        slectedIndex = eventListPorvider.listImage.indexOf(event!.imagePath);
       });
     });
   }
@@ -68,6 +69,7 @@ class _EditEventState extends State<EditEvent> {
     eventListPorvider=Provider.of<EventListProvider>(context);
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+    // eventListPorvider.fullList(context);
     // final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     // final Event event = args['event'];
     // final String imagePath = args['selectedIndex'];
@@ -90,7 +92,7 @@ class _EditEventState extends State<EditEvent> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16)
                 ),
-                child: Image(image: AssetImage(listImage[slectedIndex])),
+                child: Image(image: AssetImage(eventListPorvider.listImage[slectedIndex])),
               ),
               SizedBox(height: 6,),
               SizedBox(
@@ -108,7 +110,7 @@ class _EditEventState extends State<EditEvent> {
                         child: EventTapIcon(
                           borderColor: AppColors.primaryColor,
                           isSlected: slectedIndex==index,
-                          eventName: eventName[index],
+                          eventName: eventListPorvider.eventName[index],
                           colorSlect: AppColors.primaryColor,
                           colorSlectText: AppColors.white,
                           colorUnSlectText: AppColors.primaryColor,
@@ -118,7 +120,7 @@ class _EditEventState extends State<EditEvent> {
                     separatorBuilder: (context, index) {
                       return SizedBox(width: 1,);
                     },
-                    itemCount: eventName.length),
+                    itemCount: eventListPorvider.eventName.length),
               ),
               SizedBox(height: height*0.02,),
 
@@ -137,7 +139,7 @@ class _EditEventState extends State<EditEvent> {
                           return null;
                         },
                         controller: controllerTitle,
-                        textHint: event.title,
+                        textHint: event!.title,
                         iconPrefix: Icon(Icons.note_alt_outlined,color: Colors.grey,),
                       ),
                       SizedBox(height: height*0.02,),
@@ -152,7 +154,7 @@ class _EditEventState extends State<EditEvent> {
                           return null;
                         },
                         controller: controllerDescription,
-                        textHint: event.description,
+                        textHint: event!.description,
                         maxLine: 4,
                       ),
                       SizedBox(height: height*0.01,),
@@ -167,7 +169,7 @@ class _EditEventState extends State<EditEvent> {
                               onPressed: chooseDate,
 
                               child:slectedDate==null?
-                              Text(DateFormat('MMM').format(event.dateTime)):
+                              Text(DateFormat('MMM').format(event!.dateTime)):
                               Text('${slectedDate!.day}/${slectedDate!.month}/${slectedDate!.year}')
                           )
                         ],
@@ -182,7 +184,7 @@ class _EditEventState extends State<EditEvent> {
                           TextButton(
                               onPressed: chooseTime,
                               child: slectedTime==null?
-                              Text('${event.time}'):
+                              Text('${event!.time}'):
                               Text('$formatTime')
                           )
                         ],
@@ -216,16 +218,18 @@ class _EditEventState extends State<EditEvent> {
                       ButtonWidget(
                         onPressed: (){
                           if(formKay.currentState?.validate()==true){
+                            var userProvider= Provider.of<MyUserProvider>(context,listen: false);
                             eventListPorvider.updateEvent(
                                 time: slectedTime.toString(),
-                                imagePath: listImage[slectedIndex],
-                                eventName: eventName[slectedIndex],
+                                imagePath: eventListPorvider.listImage[slectedIndex],
+                                eventName: eventListPorvider.eventName[slectedIndex],
                                 dateTime: slectedDate,
                                 title: controllerTitle.text,
                                 description: controllerDescription.text,
-                                event: event
+                                event: event!,
+                              uid: userProvider.myUser!.id
                             );
-                            eventListPorvider.getAllEvent();
+                            eventListPorvider.getAllEvent(userProvider.myUser!.id);
                             Navigator.popUntil(context, ModalRoute.withName(HomeScreen.routeName));
                           }
                         },

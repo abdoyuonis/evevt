@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:untitled15/model.dart';
 import 'package:untitled15/utils/App_Color.dart';
 import 'package:untitled15/utils/App_Style.dart';
+import '../../Providers/My_User_Provider.dart';
 import '../../Providers/event_list_provider.dart';
 
 class EventItem extends StatelessWidget {
@@ -13,6 +14,7 @@ class EventItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var eventListProvider = Provider.of<EventListProvider>(context);
+    var userProvider= Provider.of<MyUserProvider>(context);
     return Container(
       height: 220,
       width: double.infinity,
@@ -55,7 +57,7 @@ class EventItem extends StatelessWidget {
                     ,child: Text(event.title)),
                 Expanded(child: IconButton(
                   onPressed: (){
-                    eventListProvider.updateIsFavorite(event);
+                    eventListProvider.updateIsFavorite(event,userProvider.myUser!.id);
                   },
                   icon:Icon(event.isFavorite?
                   Icons.favorite:

@@ -59,4 +59,85 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connect_with => 'Connect with Friends & Share Moments';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get forget_Password => 'Forget Password';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get dont_have => 'Don’t Have Account';
+
+  @override
+  String get create_Aco => 'Create Account';
+
+  @override
+  String get or => 'Or';
+
+  @override
+  String get login_with_google => 'Login With Google';
+
+  @override
+  String get already => 'Already Have Account';
+
+  @override
+  String get welcome => 'Welcome Back';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get sport => 'Sport';
+
+  @override
+  String get birthday => 'Birthday';
+
+  @override
+  String get meeting => 'Meeting';
+
+  @override
+  String get gaming => 'Gaming';
+
+  @override
+  String get workShop => 'WorkShop';
+
+  @override
+  String get book => 'Book Club';
+
+  @override
+  String get exhibiyion => 'Exhibiyion';
+
+  @override
+  String get holiday => 'Holiday';
+
+  @override
+  String get eating => 'eating';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get map => 'Map';
+
+  @override
+  String get love => 'Love';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get title => 'Title';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get no_found => 'Not Found Event';
 }

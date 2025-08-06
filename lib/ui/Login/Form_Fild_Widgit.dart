@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:untitled15/utils/App_Color.dart';
 import '../../utils/App_Style.dart';
 typedef OnValidator=String? Function(String?)?;
+typedef OnChanged=void Function(String)?;
 class FormFieldWidgit extends StatelessWidget {
   Color colorSide;
   String? textHint;
@@ -13,7 +14,7 @@ class FormFieldWidgit extends StatelessWidget {
   TextEditingController controller;
   bool obscurText;
   int? maxLine;
-
+  OnChanged? onChanged;
 
 
 
@@ -28,7 +29,8 @@ class FormFieldWidgit extends StatelessWidget {
      this.kayBordTayb=TextInputType.text,
     this.obscurText=false,
      required this.controller,
-    this.maxLine
+    this.maxLine,
+    this.onChanged
    });
 
   @override
@@ -37,6 +39,7 @@ class FormFieldWidgit extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
         maxLines: maxLine,
+        onChanged: onChanged,
         decoration: InputDecoration(
           enabledBorder: buildDecorationSide(colorSide),
           focusedBorder: buildDecorationSide(colorSide),

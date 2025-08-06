@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled15/Providers/App_Theme_Provider.dart';
 import 'package:untitled15/Providers/Language_Provider.dart';
+import 'package:untitled15/Providers/My_User_Provider.dart';
 import 'package:untitled15/Providers/event_list_provider.dart';
 import 'package:untitled15/ui/Home/Home_Screen/Home_Screen.dart';
 import 'package:untitled15/ui/Home/taps/Home_Tap/Add_Events.dart';
@@ -26,14 +27,15 @@ void main()async{
     options: DefaultFirebaseOptions.currentPlatform,
   );
   String? langCode = await SharedPref.readLang();
-  await FirebaseFirestore.instance.disableNetwork();
+  // await FirebaseFirestore.instance.disableNetwork();
   runApp(
 
       MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AppLanguageProvider(),),
         ChangeNotifierProvider(create: (context) => AppThemeProvider(),),
-        ChangeNotifierProvider(create: (context) => EventListProvider(),)
+        ChangeNotifierProvider(create: (context) => EventListProvider(),),
+        ChangeNotifierProvider(create: (context) => MyUserProvider(),)
       ],
       child: MyApp( langcode: langCode ?? 'en',)));
 }
@@ -47,7 +49,7 @@ class MyApp extends StatelessWidget{
     var themeProvider = Provider.of<AppThemeProvider>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: HomeScreen.routeName,
+      initialRoute: LoginScreen.routeName,
       routes: {
         ProfileTap.routeName:(context)=>ProfileTap(),
         Onbordingscreen.routeName:(context)=>Onbordingscreen(),

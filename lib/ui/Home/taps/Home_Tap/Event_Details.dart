@@ -5,6 +5,7 @@ import 'package:untitled15/model.dart';
 import 'package:untitled15/ui/Home/taps/Home_Tap/Edit_Event.dart';
 import 'package:untitled15/utils/App_Style.dart';
 
+import '../../../../Providers/My_User_Provider.dart';
 import '../../../../Providers/event_list_provider.dart';
 import '../../../../utils/App_Color.dart';
 import '../../../Login/Button_Widget.dart';
@@ -19,6 +20,7 @@ class EventDetails extends StatelessWidget {
     var height = MediaQuery.of(context).size.height;
     final event = ModalRoute.of(context)!.settings.arguments as Event;
     var eventListProvider = Provider.of<EventListProvider>(context);
+    var userProvider= Provider.of<MyUserProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -33,7 +35,7 @@ class EventDetails extends StatelessWidget {
           },
               icon: Image(image: AssetImage('assets/images/EditImage.png'))),
           IconButton(onPressed: (){
-            eventListProvider.removeEvent(event.id);
+            eventListProvider.removeEvent(event.id,userProvider.myUser!.id);
             Navigator.of(context).pop();
           },
               icon: Image(image: AssetImage('assets/images/deleteImage.png')))

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:untitled15/l10n/app_localizations.dart';
 import 'package:untitled15/ui/Home/taps/Home_Tap/Home_Tap.dart';
 import 'package:untitled15/ui/Home/taps/Love_Tap/Love_Tap.dart';
 import 'package:untitled15/ui/Home/taps/Map_Tap/Map_Tap.dart';
@@ -36,10 +37,10 @@ class _HomeScreenState extends State<HomeScreen> {
        selectedIconTheme: IconThemeData(color: AppColors.white),
        type: BottomNavigationBarType.fixed,
           items: [
-        BottomNavigationBarItem(icon: ImageIcon(AssetImage(AppImages.homeIcon),color: AppColors.white,),label: 'Home'),
-        BottomNavigationBarItem(icon: ImageIcon(AssetImage(AppImages.mapIcon),color: AppColors.white,),label: 'Map'),
-        BottomNavigationBarItem(icon: ImageIcon(AssetImage(AppImages.heartIcon),color: AppColors.white,),label: 'Love'),
-        BottomNavigationBarItem(icon: ImageIcon(AssetImage(AppImages.profileIcon),color: AppColors.white,),label: 'Profile'),
+        BottomNavigationBarItem(icon: ImageIcon(AssetImage(AppImages.homeIcon),color: AppColors.white,),label: AppLocalizations.of(context)!.home),
+        BottomNavigationBarItem(icon: ImageIcon(AssetImage(AppImages.mapIcon),color: AppColors.white,),label: AppLocalizations.of(context)!.map),
+        BottomNavigationBarItem(icon: ImageIcon(AssetImage(AppImages.heartIcon),color: AppColors.white,),label: AppLocalizations.of(context)!.love),
+        BottomNavigationBarItem(icon: ImageIcon(AssetImage(AppImages.profileIcon),color: AppColors.white,),label: AppLocalizations.of(context)!.profile),
       ]),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled15/Providers/My_User_Provider.dart';
 import 'package:untitled15/Providers/event_list_provider.dart';
+import 'package:untitled15/l10n/app_localizations.dart';
 import 'package:untitled15/ui/Home/taps/Home_Tap/Event_Details.dart';
 import 'package:untitled15/ui/Home/taps/Home_Tap/Event_Tap_Icon.dart';
 import 'package:untitled15/ui/Widgit/Event_Item.dart';
@@ -27,8 +29,11 @@ class _HomeTapState extends State<HomeTap> {
   @override
   Widget build(BuildContext context) {
     var eventListPorvider = Provider.of<EventListProvider>(context);
+    var userProvider = Provider.of<MyUserProvider>(context);
     if(eventListPorvider.eventList.isEmpty){
-      eventListPorvider.getAllEvent();
+      eventListPorvider.getAllEvent(userProvider.myUser!.id);
+      eventListPorvider.getFavorite(userProvider.myUser!.id);
+      eventListPorvider.fullList(context);
     }
 
     return Scaffold(
@@ -38,8 +43,8 @@ class _HomeTapState extends State<HomeTap> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Welcome Back ✨',style: AppStyle.regular14white,),
-            Text('John Safwat',style: AppStyle.bold24White,),
+            Text('${AppLocalizations.of(context)!.welcome} ✨',style: AppStyle.regular14white,),
+            Text(userProvider.myUser!.name,style: AppStyle.bold24White,),
             Row(
               children: [
                 ImageIcon(AssetImage(AppImages.mapIcon),color: AppColors.white,),
@@ -51,7 +56,7 @@ class _HomeTapState extends State<HomeTap> {
                 length: eventListPorvider.eventName.length,
                 child: TabBar(
                   onTap: (index) {
-                    eventListPorvider.changeSelectedIndex(index);
+                    eventListPorvider.changeSelectedIndex(index,userProvider.myUser!.id);
                   },
                   isScrollable: true,
                     dividerColor: Colors.transparent,
@@ -87,7 +92,7 @@ class _HomeTapState extends State<HomeTap> {
           Expanded(
             child:eventListPorvider.filterEventList.isEmpty?
             Center(
-              child: Text('Not found Event', style: AppStyle.bold20black,),
+              child: Text(AppLocalizations.of(context)!.no_found, style: AppStyle.bold20black,),
             )
                 :
             ListView.separated(

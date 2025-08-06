@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled15/Providers/My_User_Provider.dart';
 import 'package:untitled15/Providers/event_list_provider.dart';
 import 'package:untitled15/model.dart';
 import 'package:untitled15/ui/Login/Button_Widget.dart';
@@ -27,17 +28,7 @@ class _AddEventsState extends State<AddEvents> {
    var formKay = GlobalKey<FormState>();
    TextEditingController controllerTitle=TextEditingController();
    TextEditingController controllerDescription=TextEditingController();
-   List<String> listImage=[
-     'assets/images/Sport.png',
-     'assets/images/Birthday.png',
-     'assets/images/Meeting.png',
-     'assets/images/Gaming.png',
-     'assets/images/WorkShop.png',
-     'assets/images/BookClub.png',
-     'assets/images/Exhibition.png',
-     'assets/images/Holiday.png',
-     'assets/images/Eating.png'
-   ];
+
    List<String> eventName = ['Sports','Birthday','Meeting','Gaming','WorkShop','Book Club'
      ,'Exhibiyion','Holiday','eating'
    ];
@@ -48,6 +39,7 @@ class _AddEventsState extends State<AddEvents> {
      eventListPorvider=Provider.of<EventListProvider>(context);
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+    // eventListPorvider.fullList(context);
     return  Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -65,7 +57,7 @@ class _AddEventsState extends State<AddEvents> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16)
                 ),
-                child: Image(image: AssetImage(listImage[slectedIndex])),
+                child: Image(image: AssetImage(eventListPorvider.listImage[slectedIndex])),
               ),
               SizedBox(height: 6,),
               SizedBox(
@@ -231,17 +223,25 @@ class _AddEventsState extends State<AddEvents> {
          dateTime: slectedDate!,
          eventName: eventName[slectedIndex],
          title: controllerTitle.text,
-         imagePath: listImage[slectedIndex],
+         imagePath: eventListPorvider.listImage[slectedIndex],
          description: controllerDescription.text,
          time: formatTime!
      );
-     FirebaseUtils.addEventToFireStore(event).timeout(Duration(milliseconds: 500),
-       onTimeout: () {
+     var userProvider= Provider.of<MyUserProvider>(context,listen: false);
+     FirebaseUtils.addEventToFireStore(event,userProvider.myUser!.id)
+     .then((value) {
        ToastUtils.toastMsg(msg: 'add event sacs');
-       eventListPorvider.getAllEvent();
-         Navigator.of(context).pop();
-       },
-     );
+       eventListPorvider.getAllEvent(userProvider.myUser!.id);
+     },);
+     //     .timeout(Duration(milliseconds: 500),
+     //   onTimeout: () {
+     //   ToastUtils.toastMsg(msg: 'add event sacs');
+     //   eventListPorvider.getAllEvent(userProvider.myUser!.id);
+     //     Navigator.of(context).pop();
+     //   },
+     // );
+     Navigator.of(context).pop();
+
    }
   }
 

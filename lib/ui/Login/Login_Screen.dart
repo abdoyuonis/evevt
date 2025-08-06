@@ -1,4 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled15/Providers/My_User_Provider.dart';
+import 'package:untitled15/Providers/event_list_provider.dart';
+import 'package:untitled15/l10n/app_localizations.dart';
 import 'package:untitled15/ui/Home/Home_Screen/Home_Screen.dart';
 import 'package:untitled15/ui/Login/Button_Widget.dart';
 import 'package:untitled15/ui/Login/Forget_Password_Screen.dart';
@@ -7,6 +13,8 @@ import 'package:untitled15/ui/Login/Register_Screen.dart';
 import 'package:untitled15/ui/Widgit/Languge_Change_Widgwt.dart';
 import 'package:untitled15/utils/App_Color.dart';
 import 'package:untitled15/utils/App_Style.dart';
+import 'package:untitled15/utils/Firebase_Utils.dart';
+import 'package:untitled15/utils/dailod_Utils.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = 'Login_Screen';
@@ -41,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(height: height*.04,),
                     Image(image: AssetImage('assets/images/Logo2.png'),height: height*0.19,),
                     FormFieldWidgit(
-                      textHint: 'Email',
+                      textHint: AppLocalizations.of(context)!.email,
                       iconPrefix: Icon(Icons.email,color: Colors.grey,),
                       controller: emailController ,
                       validator: (text) {
@@ -62,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     FormFieldWidgit(
                       maxLine: 1,
                       obscurText: true,
-                      textHint: 'Password',
+                      textHint: AppLocalizations.of(context)!.password,
                       iconPrefix: Icon(Icons.lock,color: Colors.grey,),
                       iconSuffix: IconButton(onPressed: null, icon: Icon(Icons.remove_red_eye_sharp,color: Colors.grey,)),
                       controller: passwordController,
@@ -83,23 +91,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: TextButton(onPressed: (){
                         Navigator.of(context).pushNamed(ForgetPasswordScreen.routeName);
                       },
-                          child: Text('Forget Password?',style: AppStyle.bold20bPrimary.copyWith(
+                          child: Text('${AppLocalizations.of(context)!.forget_Password}?',style: AppStyle.bold20bPrimary.copyWith(
                               fontSize: 16,
                               decoration: TextDecoration.underline,decorationColor: AppColors.primaryColor
                           ),)),
                     ),
                     SizedBox(height: height*.01,),
                     ButtonWidget(onPressed: login,
-                      buttonChild: Text('Login',style: AppStyle.midam16white,),),
+                      buttonChild: Text(AppLocalizations.of(context)!.login,style: AppStyle.midam16white,),),
                     SizedBox(height: height*.01,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Don’t Have Account ?',style: AppStyle.bold20black.copyWith(fontSize: 16),),
+                        Text('${AppLocalizations.of(context)!.dont_have} ?',style: AppStyle.bold20black.copyWith(fontSize: 16),),
                         TextButton(onPressed: (){
                           Navigator.of(context).pushNamed(RegisterScreen.routeName);
                         },
-                            child: Text('Create Account',style: AppStyle.bold20bPrimary.copyWith(
+                            child: Text(AppLocalizations.of(context)!.create_Aco,style: AppStyle.bold20bPrimary.copyWith(
                                 fontSize: 16,
                                 decoration: TextDecoration.underline,decorationColor: AppColors.primaryColor
                             ),)),
@@ -116,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: AppColors.primaryColor,
                           ),
                         ),
-                        Text('Or',style: AppStyle.midam16Black.copyWith(color: AppColors.primaryColor),),
+                        Text(AppLocalizations.of(context)!.or,style: AppStyle.midam16Black.copyWith(color: AppColors.primaryColor),),
                         Expanded(
                           child: Divider(
                             endIndent: 15,
@@ -128,14 +136,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       ],
                     ),
-                    ButtonWidget(onPressed: (){},
+                    ButtonWidget(onPressed: signInWithGoogle,
                       colorBg: Colors.transparent,
                       buttonChild: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image(image: AssetImage('assets/images/googleImage.png')),
                           SizedBox(width: width*.03,),
-                          Text('Login With Google',style: AppStyle.midam20Primary,)
+                          Text(AppLocalizations.of(context)!.login_with_google,style: AppStyle.midam20Primary,)
                         ],
                       ),
                     ),
@@ -156,9 +164,93 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void login(){
+  void login()async{
     if(formKay.currentState?.validate()==true){
-      Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+      //todo show loading
+      DialogUtils.showLoading(context: context, loadingText: 'loading');
+      try {
+        final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: emailController.text,
+            password: passwordController.text
+        );
+        //todo read user from fireStore
+        var user = await FirebaseUtils.readUserFromFireStore(credential.user?.uid??'');
+        if(user==null){
+          return;
+        }
+        var userProvider=Provider.of<MyUserProvider>(context, listen: false);
+        var eventListProvider=Provider.of<EventListProvider>(context,listen: false);
+        if(userProvider.myUser!=null){
+          eventListProvider.changeSelectedIndex(0, userProvider.myUser!.id);
+          eventListProvider.getFilterEventFromFireStore(userProvider.myUser!.id);
+        }
+
+
+        userProvider.updateUser(user);
+        eventListProvider.getAllEvent(userProvider.myUser!.id);
+        eventListProvider.changeSelectedIndex(0, userProvider.myUser!.id);
+        //todo hide loading
+        DialogUtils.hideLoading(context: context);
+        //todo show message
+        DialogUtils.showMessage(
+            context: context,
+            text: 'Login Sucssflay',
+        posActionName: 'ok',
+        posAction: (){
+          Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+        }
+        );
+
+      }
+
+
+      on FirebaseAuthException catch (e) {
+        if (e.code == 'invalid-credential') {
+          //todo hide loading
+          DialogUtils.hideLoading(context: context);
+          //todo show message
+          DialogUtils.showMessage(
+            posActionName: 'ok',
+              context: context,
+              text: 'No user found for that email or wrong password.');
+          print('No user found for that email or wrong password.');
+        } else if (e.code == 'network-request-failed') {
+          //todo hide loading
+          DialogUtils.hideLoading(context: context);
+          //todo show message
+          DialogUtils.showMessage(
+            posActionName: 'ok',
+              context: context,
+              text: 'no network');
+          print('no network');
+        }
+      }
+      catch(e){
+        //todo hide loading
+        DialogUtils.hideLoading(context: context);
+        //todo show message
+        DialogUtils.showMessage(
+            context: context,
+            text: '${e.toString()}');
+        print(e.toString());
+      }
     }
+  }
+
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 }

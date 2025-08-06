@@ -1,19 +1,38 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled15/ui/Home/Home_Screen/Home_Screen.dart';
+import 'package:untitled15/utils/Firebase_Utils.dart';
+import 'package:untitled15/utils/Model/my_user.dart';
+import 'package:untitled15/utils/dailod_Utils.dart';
 
+import '../../Providers/My_User_Provider.dart';
+import '../../Providers/event_list_provider.dart';
 import '../../utils/App_Color.dart';
 import '../../utils/App_Style.dart';
 import '../Widgit/Languge_Change_Widgwt.dart';
 import 'Button_Widget.dart';
 import 'Form_Fild_Widgit.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   static const String routeName = 'register_screen';
-  TextEditingController emailController=TextEditingController();
-  TextEditingController passwordController=TextEditingController();
-  TextEditingController rePasswordController=TextEditingController();
-  TextEditingController nameController=TextEditingController();
-  var formKay = GlobalKey<FormState>();
+
    RegisterScreen({super.key});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  TextEditingController emailController=TextEditingController();
+
+  TextEditingController passwordController=TextEditingController();
+
+  TextEditingController rePasswordController=TextEditingController();
+
+  TextEditingController nameController=TextEditingController();
+
+  var formKay = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +113,7 @@ class RegisterScreen extends StatelessWidget {
                       iconSuffix: IconButton(onPressed: null, icon: Icon(Icons.remove_red_eye_sharp,color: Colors.grey,)),
                       controller: rePasswordController,
                       validator: (text) {
-                        if(text!=passwordController){
+                        if(text!=passwordController.text){
                           return "re_Password doesn't match Password ";
                         }
                         return null;
@@ -135,9 +154,66 @@ class RegisterScreen extends StatelessWidget {
       ),
     );
   }
-  void createAccount(){
-    if(formKay.currentState?.validate()==true){
 
+  void createAccount()async{
+    if(formKay.currentState?.validate()==true){
+      // todo show loading
+      DialogUtils.showLoading(context: context, loadingText: 'Loading....');
+      try {
+        final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+        //todo save to firebase
+        MyUser myUser=MyUser(
+            id: credential.user?.uid??'',
+            email: emailController.text,
+            name: nameController.text);
+        await FirebaseUtils.addUserToFireStore(myUser);
+        var userProvider=Provider.of<MyUserProvider>(context, listen: false);
+        userProvider.updateUser(myUser);
+        var eventListProvider=Provider.of<EventListProvider>(context,listen: false);
+        eventListProvider.changeSelectedIndex(0, userProvider.myUser!.id);
+        eventListProvider.getFilterEventFromFireStore(userProvider.myUser!.id);
+        //todo hide loading
+        DialogUtils.hideLoading(context: context);
+        //todo show message
+        DialogUtils.showMessage(
+            title: 'Register',
+            posActionName: 'ok',
+            context: context,
+            text: 'Register Sucsufly',
+          posAction: (){
+            Navigator.of(context).pushNamedAndRemoveUntil(HomeScreen.routeName, (route) => false,);
+          }
+        );
+
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          //todo hide loading
+          DialogUtils.hideLoading(context: context);
+          //todo show message
+          DialogUtils.showMessage(
+            posActionName: 'ok',
+              context: context,
+              text: 'weak-password');
+        } else if (e.code == 'email-already-in-use') {
+          //todo hide loading
+          DialogUtils.hideLoading(context: context);
+          //todo show message
+          DialogUtils.showMessage(
+            posActionName: 'ok',
+              context: context,
+              text: 'email-already-in-use');
+        }
+      } catch (e) {
+        //todo hide loading
+        DialogUtils.hideLoading(context: context);
+        //todo show message
+        DialogUtils.showMessage(
+            context: context,
+            text: '${e.toString()}');
+      }
     }
   }
 }
